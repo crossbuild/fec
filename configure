@@ -3100,13 +3100,20 @@ i386|i486|i586|i686)
 	cpu_features.o cpu_mode_x86.o"
 	;;
 powerpc*)
-	ARCH_OPTION="-fno-common -faltivec"
-	MLIBS="viterbi27_av.o viterbi29_av.o viterbi39_av.o viterbi615_av.o \
-	encode_rs_av.o \
-	dotprod_av.o sumsq_av.o peakval_av.o cpu_mode_ppc.o"
+	case $target_vendor in
+	e500)
+		MLIBS="cpu_mode_generic.o"
+		;;
+	*)
+		ARCH_OPTION="-fno-common -maltivec"
+		MLIBS="viterbi27_av.o viterbi29_av.o viterbi39_av.o viterbi615_av.o \
+		encode_rs_av.o \
+		dotprod_av.o sumsq_av.o peakval_av.o cpu_mode_ppc.o"
+		;;
+	esac
 	;;
 *)
-	MLIBS=
+	MLIBS="cpu_mode_generic.o"
 esac
 case $target_os in
 darwin*)
@@ -3115,7 +3122,7 @@ darwin*)
 	;;
 *)
 	SH_LIB=libfec.so
-	REBIND=ldconfig
+	REBIND='ldconfig || true'
 	;;
 esac
 
